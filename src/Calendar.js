@@ -1,0 +1,122 @@
+import { useCallback, useEffect, useMemo, useState } from "react";
+
+const createDate = (year, month) => {
+  const date = new Date(year, month, 0); // 0-index month (0 - 11)
+  const firstDay = new Date(year, month).getDay(); // 0-index day of week (0 - 6)
+  const totalDays = new Date(year, month + 1, 0).getDate();
+  const prettyName = date.toLocaleDateString("en-US", {
+    timeZone: "UTC",
+    month: "long",
+  });
+
+  return {
+    firstDay,
+    totalDays,
+    prettyName,
+  };
+};
+
+const months = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+const daysOfWeek = ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"];
+const TODAY = new Date();
+const YEARS = "years";
+const MONTHS = "months";
+const years = [...Array(60).keys()].map(
+  (idx) => TODAY.getFullYear() - 50 + idx
+);
+
+const CalendarPicker = ({ startDate = new Date() }) => {
+  const id = useMemo(() => Math.round(Math.random() * 1000), []);
+  const dateProp = useMemo(() => {
+    if (typeof startDate === "string") {
+      return new Date(startDate);
+    }
+    return startDate;
+  }, [startDate]);
+
+  const [selectedMonth, setSelectedMonth] = useState(dateProp.getMonth());
+  const [selectedYear, setSelectedYear] = useState(dateProp.getFullYear());
+  const [selectedDay, setSelectedDay] = useState(dateProp.getDate());
+  const [days, setDays] = useState([]);
+  const date = createDate(selectedYear, selectedMonth);
+
+  const setDate = useCallback(() => {
+    const newDays = [...Array(date.totalDays).keys()].map((day) => day);
+    setDays(newDays);
+  }, [date.totalDays]);
+
+  useEffect(() => setDate(), [setDate, selectedMonth, selectedYear]);
+
+  const changeDate = (event) => {
+    const { name, value } = event.target;
+    if (name === "months") {
+      setSelectedMonth(+value);
+    }
+    if (name === "years") {
+      setSelectedYear(value);
+    }
+    setDate();
+  };
+
+  return (
+    <div className="calendar">
+      <form className="title">
+        <select value={selectedMonth} name={MONTHS} onChange={changeDate}>
+          {months.map((month, idx) => (
+            <option key={month} value={idx}>
+              {month}
+            </option>
+          ))}
+        </select>
+        <select value={selectedYear} name={YEARS} onChange={changeDate}>
+          {years.map((year) => (
+            <option key={year} value={year}>
+              {year}
+            </option>
+          ))}
+        </select>
+      </form>
+      <div className="dow-container">
+        {daysOfWeek.map((dow) => (
+          <div key={dow} className="dow">
+            {dow}
+          </div>
+        ))}
+      </div>
+      <div className="grid">
+        {days.map((day) => {
+          const style = day === 0 ? { gridColumnStart: date.firstDay + 1 } : {};
+          return (
+            <form key={`${id}-${day}`} style={style} className="day">
+              <input
+                onChange={() => {
+                  setSelectedDay(day + 1);
+                }}
+                checked={selectedDay - 1 === day}
+                id={`${id}-${day}`}
+                type="radio"
+                name="dates"
+              />
+              <label htmlFor={`${id}-${day}`}>{day + 1}</label>
+            </form>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+export default CalendarPicker;
