@@ -1,7 +1,7 @@
 :root {
   --day-size: 50px;
   --day-color: lightblue;
-  --day-hover-color: pink;
+  --day-hover-color: rgba(0, 0, 0, 0.3);
   --day-checked-color: #80cbc4;
   --calendar-color: rgb(63 68 88);
 }
@@ -20,16 +20,29 @@ body {
 }
 
 .calendar {
-  padding: 5px;
+  padding: 0 10px 10px;
   background: var(--calendar-color);
   color: white;
   border-radius: 4px;
 }
 
 .title {
-  text-align: right;
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+}
+
+.title select,
+.title input,
+.month-btn {
+  background: var(--calendar-color);
+  border: none;
+  color: inherit;
   font-size: 24px;
-  margin-bottom: 5px;
+}
+
+.title input {
+  width: 75px;
 }
 
 .dow-container {
@@ -50,7 +63,9 @@ body {
 }
 .day {
   position: relative;
-  transition: 0.1s linear background;
+  transition: 0.05s linear background;
+  border-radius: 50%;
+  margin: 8px;
 }
 .day:hover {
   background: var(--day-hover-color);
@@ -67,7 +82,7 @@ body {
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  border-radius: 50%;
+  border-radius: inherit;
 }
 .day input:checked + label {
   background: var(--day-checked-color);

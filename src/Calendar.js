@@ -31,12 +31,8 @@ const months = [
   "December",
 ];
 const daysOfWeek = ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"];
-const TODAY = new Date();
 const YEARS = "years";
 const MONTHS = "months";
-const years = [...Array(60).keys()].map(
-  (idx) => TODAY.getFullYear() - 50 + idx
-);
 
 const CalendarPicker = ({ startDate = new Date() }) => {
   const id = useMemo(() => Math.round(Math.random() * 1000), []);
@@ -60,6 +56,21 @@ const CalendarPicker = ({ startDate = new Date() }) => {
 
   useEffect(() => setDate(), [setDate, selectedMonth, selectedYear]);
 
+  const changeMonth = (change) => {
+    const isJanuary = selectedMonth === 0;
+    const isDecember = selectedMonth === months.length - 1;
+
+    if (isJanuary && change < 0) {
+      setSelectedYear(selectedYear - 1);
+      setSelectedMonth(months.length - 1);
+    } else if (isDecember && change > 0) {
+      setSelectedYear(selectedYear + 1);
+      setSelectedMonth((selectedMonth + change) % months.length);
+    } else {
+      setSelectedMonth((selectedMonth + change) % months.length);
+    }
+  };
+
   const changeDate = (event) => {
     const { name, value } = event.target;
     if (name === "months") {
@@ -73,7 +84,15 @@ const CalendarPicker = ({ startDate = new Date() }) => {
 
   return (
     <div className="calendar">
-      <form className="title">
+      <div className="title">
+        <button
+          className="month-btn"
+          onClick={() => {
+            changeMonth(-1);
+          }}
+        >
+          &lt;
+        </button>
         <select value={selectedMonth} name={MONTHS} onChange={changeDate}>
           {months.map((month, idx) => (
             <option key={month} value={idx}>
@@ -81,14 +100,22 @@ const CalendarPicker = ({ startDate = new Date() }) => {
             </option>
           ))}
         </select>
-        <select value={selectedYear} name={YEARS} onChange={changeDate}>
-          {years.map((year) => (
-            <option key={year} value={year}>
-              {year}
-            </option>
-          ))}
-        </select>
-      </form>
+        <input
+          type="number"
+          value={selectedYear}
+          step="1"
+          name={YEARS}
+          onChange={changeDate}
+        />
+        <button
+          className="month-btn"
+          onClick={() => {
+            changeMonth(1);
+          }}
+        >
+          &gt;
+        </button>
+      </div>
       <div className="dow-container">
         {daysOfWeek.map((dow) => (
           <div key={dow} className="dow">
