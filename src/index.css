@@ -67,6 +67,15 @@ body {
   border-radius: 50%;
   margin: 8px;
 }
+.day.prev {
+  color: gray;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.day.prev:hover {
+  background: none;
+}
 .day:hover {
   background: var(--day-hover-color);
 }

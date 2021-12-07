@@ -1,38 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-
-const createDate = (year, month) => {
-  const date = new Date(year, month, 0); // 0-index month (0 - 11)
-  const firstDay = new Date(year, month).getDay(); // 0-index day of week (0 - 6)
-  const totalDays = new Date(year, month + 1, 0).getDate();
-  const prettyName = date.toLocaleDateString("en-US", {
-    timeZone: "UTC",
-    month: "long",
-  });
-
-  return {
-    firstDay,
-    totalDays,
-    prettyName,
-  };
-};
-
-const months = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
-const daysOfWeek = ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"];
-const YEARS = "years";
-const MONTHS = "months";
+import {
+  createDate,
+  months,
+  daysOfWeek,
+  YEARS,
+  MONTHS,
+  buildDayArray,
+} from "./helpers";
 
 const CalendarPicker = ({ startDate = new Date() }) => {
   const id = useMemo(() => Math.round(Math.random() * 1000), []);
@@ -47,12 +21,13 @@ const CalendarPicker = ({ startDate = new Date() }) => {
   const [selectedYear, setSelectedYear] = useState(dateProp.getFullYear());
   const [selectedDay, setSelectedDay] = useState(dateProp.getDate());
   const [days, setDays] = useState([]);
-  const date = createDate(selectedYear, selectedMonth);
+  const { totalDays, firstDay, prevMonthTotalDays, nextMonthTotalDays } =
+    createDate(selectedYear, selectedMonth);
 
   const setDate = useCallback(() => {
-    const newDays = [...Array(date.totalDays).keys()].map((day) => day);
+    const newDays = buildDayArray(totalDays);
     setDays(newDays);
-  }, [date.totalDays]);
+  }, [totalDays]);
 
   useEffect(() => setDate(), [setDate, selectedMonth, selectedYear]);
 
@@ -81,6 +56,15 @@ const CalendarPicker = ({ startDate = new Date() }) => {
     }
     setDate();
   };
+
+  const daysBefore = buildDayArray(prevMonthTotalDays).slice(
+    prevMonthTotalDays - firstDay
+  );
+
+  const daysAfter =
+    totalDays + firstDay <= 35
+      ? 35 - (totalDays + firstDay)
+      : 42 - (totalDays + firstDay);
 
   return (
     <div className="calendar">
@@ -124,8 +108,11 @@ const CalendarPicker = ({ startDate = new Date() }) => {
         ))}
       </div>
       <div className="grid">
+        {daysBefore.map((day) => (
+          <div className="day prev">{day + 1}</div>
+        ))}
         {days.map((day) => {
-          const style = day === 0 ? { gridColumnStart: date.firstDay + 1 } : {};
+          const style = day === 0 ? { gridColumnStart: firstDay + 1 } : {};
           return (
             <form key={`${id}-${day}`} style={style} className="day">
               <input
@@ -141,6 +128,11 @@ const CalendarPicker = ({ startDate = new Date() }) => {
             </form>
           );
         })}
+        {buildDayArray(nextMonthTotalDays)
+          .slice(0, daysAfter)
+          .map((day) => (
+            <div className="day prev">{day + 1}</div>
+          ))}
       </div>
     </div>
   );
