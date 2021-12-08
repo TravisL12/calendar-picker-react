@@ -84,7 +84,7 @@ const CalendarPicker = ({ startDate = new Date(), children }) => {
   });
 
   return (
-    <>
+    <div className="calendar-container">
       {childrenWithProps}
       {isOpen && (
         <div className="calendar">
@@ -156,7 +156,7 @@ const CalendarPicker = ({ startDate = new Date(), children }) => {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

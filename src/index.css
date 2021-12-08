@@ -19,6 +19,10 @@ body {
   width: 100%;
 }
 
+.calendar-container {
+  position: relative;
+}
+
 .calendar {
   padding: 0 10px 10px;
   background: var(--calendar-color);
@@ -38,7 +42,7 @@ body {
   background: var(--calendar-color);
   border: none;
   color: inherit;
-  font-size: 24px;
+  font-size: 20px;
 }
 
 .title input {
