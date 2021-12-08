@@ -9,7 +9,7 @@ import {
 } from "./helpers";
 
 const CalendarPicker = ({ startDate = new Date(), children }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(!children);
   const id = useMemo(() => Math.round(Math.random() * 1000), []);
   const dateProp = useMemo(() => {
     if (typeof startDate === "string") {
@@ -86,7 +86,6 @@ const CalendarPicker = ({ startDate = new Date(), children }) => {
   return (
     <>
       {childrenWithProps}
-
       {isOpen && (
         <div className="calendar">
           <div className="title">
