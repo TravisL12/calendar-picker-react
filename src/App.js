@@ -4,13 +4,19 @@ function App() {
   return (
     <div className="app">
       <div style={{ height: "400px" }}>
-        <CalendarPicker />
+        <CalendarPicker>
+          <button>Open</button>
+        </CalendarPicker>
       </div>
       <div style={{ height: "400px" }}>
-        <CalendarPicker startDate={new Date("1980-7-4")} />
+        <CalendarPicker startDate={new Date("1980-7-4")}>
+          <button>Open</button>
+        </CalendarPicker>
       </div>
       <div style={{ height: "400px" }}>
-        <CalendarPicker startDate={"2015-5-23"} />
+        <CalendarPicker startDate={"2015-5-23"}>
+          <button>Open</button>
+        </CalendarPicker>
       </div>
     </div>
   );
