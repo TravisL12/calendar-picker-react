@@ -9,7 +9,7 @@ function App() {
         </CalendarPicker>
       </div>
       <div style={{ height: "400px" }}>
-        <CalendarPicker startDate={"1980-7-4"} maxDate={"1981-5-6"} />
+        <CalendarPicker startDate={"1980-7-4"} />
       </div>
     </div>
   );

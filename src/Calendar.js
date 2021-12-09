@@ -8,7 +8,7 @@ import {
   buildDayArray,
 } from "./helpers";
 
-const CalendarPicker = ({ startDate, maxDate, children }) => {
+const CalendarPicker = ({ startDate, children }) => {
   const [isOpen, setIsOpen] = useState(!children);
   const id = useMemo(() => Math.round(Math.random() * 1000), []);
   const dateProp = useMemo(() => {
