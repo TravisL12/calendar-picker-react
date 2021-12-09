@@ -8,10 +8,13 @@ import {
   buildDayArray,
 } from "./helpers";
 
-const CalendarPicker = ({ startDate = new Date(), children }) => {
+const CalendarPicker = ({ startDate, maxDate, children }) => {
   const [isOpen, setIsOpen] = useState(!children);
   const id = useMemo(() => Math.round(Math.random() * 1000), []);
   const dateProp = useMemo(() => {
+    if (!startDate) {
+      return new Date();
+    }
     if (typeof startDate === "string") {
       return new Date(startDate);
     }
@@ -129,7 +132,9 @@ const CalendarPicker = ({ startDate = new Date(), children }) => {
           </div>
           <div className="grid">
             {daysBefore.map((day) => (
-              <div className="day prev">{day + 1}</div>
+              <div key={day} className="day prev">
+                {day + 1}
+              </div>
             ))}
             {days.map((day) => {
               const style = day === 0 ? { gridColumnStart: firstDay + 1 } : {};
@@ -151,7 +156,9 @@ const CalendarPicker = ({ startDate = new Date(), children }) => {
             {buildDayArray(nextMonthTotalDays)
               .slice(0, daysAfter)
               .map((day) => (
-                <div className="day prev">{day + 1}</div>
+                <div key={day} className="day prev">
+                  {day + 1}
+                </div>
               ))}
           </div>
         </div>
