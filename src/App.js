@@ -3,14 +3,14 @@ import CalendarPicker from "./Calendar";
 function App() {
   return (
     <div className="app">
-      <div style={{ height: "400px" }}>
-        <CalendarPicker>
-          <button>Open</button>
-        </CalendarPicker>
-      </div>
-      <div style={{ height: "400px" }}>
-        <CalendarPicker startDate={"1980-7-4"} />
-      </div>
+      <CalendarPicker>
+        <div>Open</div>
+      </CalendarPicker>
+      <CalendarPicker
+        startDate={"1980-12-4"}
+        maxDate={"1981-3-25"}
+        minDate={"1980-3-25"}
+      />
     </div>
   );
 }

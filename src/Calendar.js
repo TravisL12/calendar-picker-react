@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   createDate,
   months,
@@ -8,57 +8,70 @@ import {
   buildDayArray,
 } from "./helpers";
 
-const CalendarPicker = ({ startDate, children }) => {
-  const [isOpen, setIsOpen] = useState(!children);
+const CalendarPicker = ({ startDate, maxDate, minDate, children }) => {
   const id = useMemo(() => Math.round(Math.random() * 1000), []);
-  const dateProp = useMemo(() => {
-    if (!startDate) {
-      return new Date();
-    }
-    if (typeof startDate === "string") {
-      return new Date(startDate);
-    }
-    return startDate;
-  }, [startDate]);
 
-  const [selectedMonth, setSelectedMonth] = useState(dateProp.getMonth());
-  const [selectedYear, setSelectedYear] = useState(dateProp.getFullYear());
-  const [selectedDay, setSelectedDay] = useState(dateProp.getDate());
-  const [days, setDays] = useState([]);
-  const { totalDays, firstDay, prevMonthTotalDays, nextMonthTotalDays } =
-    createDate(selectedYear, selectedMonth);
+  const hasTrigger = !!children;
+  const [isOpen, setIsOpen] = useState(!hasTrigger);
+  const [date, setDate] = useState(createDate(startDate));
 
-  const setDate = useCallback(() => {
-    const newDays = buildDayArray(totalDays);
-    setDays(newDays);
-  }, [totalDays]);
+  const {
+    date: dateProp,
+    totalDays,
+    firstDay,
+    prevMonthTotalDays,
+    nextMonthTotalDays,
+    days,
+  } = date;
 
-  useEffect(() => setDate(), [setDate, selectedMonth, selectedYear]);
+  const selectedMonth = dateProp.getMonth();
+  const selectedYear = dateProp.getFullYear();
+  const selectedDay = dateProp.getDate();
+
+  const updateDate = ({
+    year = selectedYear,
+    month = selectedMonth,
+    day = selectedDay,
+  }) => {
+    const created = createDate(`${year}-${month + 1}-${day}`);
+    setDate(created);
+  };
 
   const changeMonth = (change) => {
     const isJanuary = selectedMonth === 0;
     const isDecember = selectedMonth === months.length - 1;
 
+    let year = selectedYear;
+    let month = selectedMonth;
+
     if (isJanuary && change < 0) {
-      setSelectedYear(selectedYear - 1);
-      setSelectedMonth(months.length - 1);
+      year = selectedYear - 1;
+      month = months.length - 1;
     } else if (isDecember && change > 0) {
-      setSelectedYear(selectedYear + 1);
-      setSelectedMonth((selectedMonth + change) % months.length);
+      year = selectedYear + 1;
+      month = (selectedMonth + change) % months.length;
     } else {
-      setSelectedMonth((selectedMonth + change) % months.length);
+      month = (selectedMonth + change) % months.length;
     }
+
+    updateDate({ year, month });
   };
 
   const changeDate = (event) => {
     const { name, value } = event.target;
+    let year = selectedYear;
+    let month = selectedMonth;
+
     if (name === "months") {
-      setSelectedMonth(+value);
+      month = +value;
     }
     if (name === "years") {
-      setSelectedYear(value);
+      year = value;
     }
-    setDate();
+    if (String(year).length < 3) {
+      return;
+    }
+    updateDate({ year, month });
   };
 
   const daysBefore = buildDayArray(prevMonthTotalDays).slice(
@@ -88,7 +101,7 @@ const CalendarPicker = ({ startDate, children }) => {
     <div className="calendar-container">
       {childrenWithProps}
       {isOpen && (
-        <div className="calendar">
+        <div className={`calendar ${hasTrigger ? "hasTrigger" : ""}`}>
           <div className="title">
             <button
               className="month-btn"
@@ -140,7 +153,7 @@ const CalendarPicker = ({ startDate, children }) => {
                 <form key={`${id}-${day}`} style={style} className="day">
                   <input
                     onChange={() => {
-                      setSelectedDay(day + 1);
+                      updateDate({ day: day + 1 });
                     }}
                     checked={selectedDay - 1 === day}
                     id={`${id}-${day}`}
