@@ -65,10 +65,8 @@ const CalendarPicker = ({ startDate, children }) => {
     prevMonthTotalDays - firstDay
   );
 
-  const daysAfter =
-    totalDays + firstDay <= 35
-      ? 35 - (totalDays + firstDay)
-      : 42 - (totalDays + firstDay);
+  const endDow = totalDays + firstDay;
+  const daysAfter = endDow <= 35 ? 35 - endDow : 42 - endDow;
 
   const toggleOpen = () => {
     setIsOpen(!isOpen);
